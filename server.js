@@ -1,18 +1,23 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Hardcoded credentials (in production, use environment variables or a database)
+// Hardcoded credentials
 const VALID_USERNAME = "AbidBLA";
 const VALID_PASSWORD = "Abid@123";
 
 // Login endpoint
 app.post('/api/login', (req, res) => {
+    console.log('Login attempt:', req.body);
+    
     const { username, password } = req.body;
     
     if (!username || !password) {
@@ -23,11 +28,13 @@ app.post('/api/login', (req, res) => {
     }
     
     if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+        console.log('Login successful for user:', username);
         return res.json({
             success: true,
             message: 'Login successful'
         });
     } else {
+        console.log('Login failed for user:', username);
         return res.status(401).json({
             success: false,
             message: 'Invalid username or password'
@@ -41,5 +48,6 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`📁 Serving static files from: ${path.join(__dirname, 'public')}`);
 });
